@@ -34,7 +34,14 @@
 - [ ] Sitemap.xml ve Robots.txt.
 - [ ] Sayfalama (Pagination).
 
-## Faz 5: İleri Düzey Özellikler ve Dağıtım (Planlanıyor 🔴)
-- [ ] Zengin Metin Editörü (Markdown veya quill/tiptap).
+## Faz 5: İleri Düzey Özellikler ve Dağıtım (Tamamlandı ✅)
+- [x] Zengin Metin Editörü (Tiptap entegre edildi).
+- [x] Premium Light/Dark Mod Tasarımı.
+- [x] Firebase Hosting Konfigürasyonu (Next.js App Router uyumlu).
+- [x] Git Push ve Sürüm Kontrolü.
+
+## Faz 6: Final Dokunuşları ve SEO (Planlanıyor 🔴)
+- [ ] SEO Meta Etiketleri (Dinamik Başlıklar).
+- [ ] Sitemap.xml ve Robots.txt.
 - [ ] Analytics Entegrasyonu.
-- [ ] Production Build ve Deploy.
+- [ ] Performans ve Erişim Kolaylığı Optimizasyonu.
