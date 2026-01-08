@@ -3,11 +3,11 @@
 import { useState } from "react";
 import { db } from "@/lib/firebase";
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Send, Mail, MapPin, Phone } from "lucide-react";
+import { Send, Mail, MapPin, Globe } from "lucide-react";
 
 export default function ContactPage() {
     const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
@@ -33,122 +33,144 @@ export default function ContactPage() {
     };
 
     return (
-        <div className="mt-10 px-4 max-w-5xl mx-auto space-y-12">
-            <div className="text-center space-y-4">
-                <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white uppercase">İletişim</h1>
-                <p className="text-zinc-400 text-lg max-w-2xl mx-auto">Benimle iletişime geçmek için aşağıdaki formu kullanabilir veya doğrudan e-posta gönderebilirsiniz.</p>
-            </div>
+        <div className="mt-20 px-4 max-w-6xl mx-auto pb-24 space-y-20">
+            <header className="text-center space-y-6">
+                <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-white uppercase italic leading-[0.8]">
+                    İletişim
+                </h1>
+                <p className="text-zinc-500 text-xl md:text-2xl max-w-2xl mx-auto font-medium tracking-tight italic">
+                    "Bir fikriniz mi var? Birlikte dijital dünyayı güzelleştirelim."
+                </p>
+            </header>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                <div className="md:col-span-2">
-                    <Card className="bg-zinc-900/50 border-zinc-800 text-zinc-100 shadow-2xl overflow-hidden rounded-3xl">
-                        <CardHeader className="bg-zinc-900/50 p-8 border-b border-zinc-800">
-                            <CardTitle className="text-2xl">Bana Mesaj Gönder</CardTitle>
-                            <CardDescription className="text-zinc-500">En kısa sürede size geri dönüş yapacağım.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="p-8">
-                            {sent ? (
-                                <div className="text-center py-12 space-y-4">
-                                    <div className="w-16 h-16 bg-emerald-500/20 text-emerald-500 rounded-full flex items-center justify-center mx-auto mb-4">
-                                        <Send className="w-8 h-8" />
-                                    </div>
-                                    <h3 className="text-2xl font-bold text-white">Mesajınız Alındı!</h3>
-                                    <p className="text-zinc-400">İletişime geçtiğiniz için teşekkürler. En kısa sürede yanıtlayacağım.</p>
-                                    <Button variant="outline" onClick={() => setSent(false)} className="mt-4 border-zinc-700 hover:bg-zinc-800 rounded-xl px-8">Yeni Mesaj Gönder</Button>
-                                </div>
-                            ) : (
-                                <form onSubmit={handleSubmit} className="space-y-6">
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-medium text-zinc-400">Adınız</label>
-                                            <Input
-                                                value={formData.name}
-                                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                                placeholder="Ad Soyad"
-                                                className="bg-zinc-950/50 border-zinc-700 h-12 rounded-xl focus:ring-rose-500 ring-offset-zinc-900"
-                                                required
-                                            />
-                                        </div>
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-medium text-zinc-400">E-posta</label>
-                                            <Input
-                                                type="email"
-                                                value={formData.email}
-                                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                                placeholder="eposta@adresiniz.com"
-                                                className="bg-zinc-950/50 border-zinc-700 h-12 rounded-xl focus:ring-rose-500 ring-offset-zinc-900"
-                                                required
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-medium text-zinc-400">Konu</label>
-                                        <Input
-                                            value={formData.subject}
-                                            onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                                            placeholder="Hangi konuda yazıyorsunuz?"
-                                            className="bg-zinc-950/50 border-zinc-700 h-12 rounded-xl focus:ring-rose-500 ring-offset-zinc-900"
-                                            required
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="text-sm font-medium text-zinc-400">Mesajınız</label>
-                                        <Textarea
-                                            value={formData.message}
-                                            onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                                            placeholder="Mesajınızı buraya yazın..."
-                                            className="bg-zinc-950/50 border-zinc-700 min-h-[150px] rounded-xl focus:ring-rose-500 ring-offset-zinc-900"
-                                            required
-                                        />
-                                    </div>
-                                    <Button type="submit" disabled={loading} className="w-full h-14 bg-rose-600 hover:bg-rose-700 text-lg font-bold rounded-xl transition-all active:scale-[0.98]">
-                                        {loading ? "Gönderiliyor..." : "Hemen Gönder"}
-                                    </Button>
-                                </form>
-                            )}
-                        </CardContent>
-                    </Card>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                {/* Contact Links */}
+                <div className="space-y-6">
+                    <ContactCard
+                        icon={Mail}
+                        title="E-posta"
+                        value="basaransmk@yandex.com"
+                        color="text-rose-500"
+                        bg="bg-rose-500/10"
+                    />
+                    <ContactCard
+                        icon={MapPin}
+                        title="Konum"
+                        value="İstanbul, Türkiye"
+                        color="text-emerald-500"
+                        bg="bg-emerald-500/10"
+                    />
+                    <ContactCard
+                        icon={Globe}
+                        title="Web"
+                        value="semihbasaran.com"
+                        color="text-indigo-500"
+                        bg="bg-indigo-500/10"
+                    />
+
+                    <div className="p-8 bg-gradient-to-br from-rose-600 to-rose-800 rounded-[2.5rem] text-white shadow-2xl relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-white/10 rounded-full blur-3xl group-hover:scale-150 transition-transform duration-700"></div>
+                        <h3 className="text-2xl font-black mb-2 italic">Hızlı Yanıt</h3>
+                        <p className="text-rose-100/80 font-medium">Genellikle 24 saat içinde tüm mesajlara geri dönüş yapıyorum.</p>
+                    </div>
                 </div>
 
-                <div className="space-y-6">
-                    <Card className="bg-zinc-900/50 border-zinc-800 text-zinc-100 rounded-3xl">
-                        <CardContent className="p-8 space-y-8">
-                            <div className="flex gap-4 items-start">
-                                <div className="p-3 bg-zinc-900 rounded-xl border border-zinc-800 text-rose-500">
-                                    <Mail className="w-6 h-6" />
+                {/* Contact Form */}
+                <div className="lg:col-span-2">
+                    <div className="glass rounded-[3rem] p-8 md:p-12 overflow-hidden relative">
+                        {sent ? (
+                            <div className="text-center py-20 space-y-6 animate-in fade-in zoom-in duration-500">
+                                <div className="w-24 h-24 bg-emerald-500/20 text-emerald-500 rounded-full flex items-center justify-center mx-auto shadow-inner">
+                                    <Send className="w-10 h-10" />
                                 </div>
-                                <div>
-                                    <h4 className="font-bold text-white">E-posta</h4>
-                                    <p className="text-zinc-400 text-sm">basaransmk@yandex.com</p>
+                                <div className="space-y-2">
+                                    <h3 className="text-4xl font-black text-white italic">TEŞEKKÜRLER!</h3>
+                                    <p className="text-zinc-400 text-xl font-medium">Mesajınız başarıyla iletildi. En kısa sürede yanıtlayacağım.</p>
                                 </div>
+                                <Button
+                                    onClick={() => setSent(false)}
+                                    className="mt-8 bg-white text-black hover:bg-zinc-200 px-10 h-14 rounded-2xl font-black uppercase tracking-widest transition-all hover:scale-105 active:scale-95"
+                                >
+                                    Yeni Mesaj
+                                </Button>
                             </div>
-                            <div className="flex gap-4 items-start">
-                                <div className="p-3 bg-zinc-900 rounded-xl border border-zinc-800 text-emerald-500">
-                                    <MapPin className="w-6 h-6" />
+                        ) : (
+                            <form onSubmit={handleSubmit} className="space-y-8">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div className="space-y-3">
+                                        <label className="text-xs font-black text-zinc-500 uppercase tracking-widest ml-1">İSİM SOYİSİM</label>
+                                        <Input
+                                            value={formData.name}
+                                            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                            placeholder="Semih Başaran"
+                                            className="bg-zinc-900/50 border-zinc-800 h-16 rounded-2xl px-6 focus:ring-rose-500/50 text-lg font-medium"
+                                            required
+                                        />
+                                    </div>
+                                    <div className="space-y-3">
+                                        <label className="text-xs font-black text-zinc-500 uppercase tracking-widest ml-1">E-POSTA ADRESİ</label>
+                                        <Input
+                                            type="email"
+                                            value={formData.email}
+                                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                            placeholder="hello@world.com"
+                                            className="bg-zinc-900/50 border-zinc-800 h-16 rounded-2xl px-6 focus:ring-rose-500/50 text-lg font-medium"
+                                            required
+                                        />
+                                    </div>
                                 </div>
-                                <div>
-                                    <h4 className="font-bold text-white">Konum</h4>
-                                    <p className="text-zinc-400 text-sm">Türkiye, İstanbul</p>
+                                <div className="space-y-3">
+                                    <label className="text-xs font-black text-zinc-500 uppercase tracking-widest ml-1">KONU</label>
+                                    <Input
+                                        value={formData.subject}
+                                        onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                                        placeholder="Bir proje hakkında..."
+                                        className="bg-zinc-900/50 border-zinc-800 h-16 rounded-2xl px-6 focus:ring-rose-500/50 text-lg font-medium"
+                                        required
+                                    />
                                 </div>
-                            </div>
-                            <div className="flex gap-4 items-start">
-                                <div className="p-3 bg-zinc-900 rounded-xl border border-zinc-800 text-indigo-500">
-                                    <Phone className="w-6 h-6" />
+                                <div className="space-y-3">
+                                    <label className="text-xs font-black text-zinc-500 uppercase tracking-widest ml-1">MESAJINIZ</label>
+                                    <Textarea
+                                        value={formData.message}
+                                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                                        placeholder="Neler anlatmak istersiniz?"
+                                        className="bg-zinc-900/50 border-zinc-800 min-h-[200px] rounded-3xl p-6 focus:ring-rose-500/50 text-lg font-medium leading-relaxed"
+                                        required
+                                    />
                                 </div>
-                                <div>
-                                    <h4 className="font-bold text-white">Sosyal Medya</h4>
-                                    <p className="text-zinc-400 text-sm">@basaransemih</p>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <div className="p-8 bg-rose-600 rounded-3xl text-white space-y-4">
-                        <h3 className="text-xl font-bold">Bir projeniz mi var?</h3>
-                        <p className="text-rose-100 opacity-90 text-sm italic">"Birlikte harika şeyler inşa edebiliriz. Mesaj atın, hemen planlayalım."</p>
+                                <Button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="w-full h-20 bg-rose-600 hover:bg-rose-500 text-white text-2xl font-black rounded-[2rem] shadow-2xl shadow-rose-600/20 active:scale-[0.98] transition-all flex items-center justify-center gap-4"
+                                >
+                                    {loading ? (
+                                        <span className="animate-pulse">GÖNDERİLİYOR...</span>
+                                    ) : (
+                                        <>GÖNDER <Send className="w-6 h-6" /></>
+                                    )}
+                                </Button>
+                            </form>
+                        )}
                     </div>
                 </div>
             </div>
         </div>
+    );
+}
+
+function ContactCard({ icon: Icon, title, value, color, bg }: any) {
+    return (
+        <Card className="bg-zinc-900/30 border-zinc-800/50 rounded-[2rem] hover:bg-zinc-900/50 transition-all duration-300 group">
+            <CardContent className="p-8 flex items-center gap-6">
+                <div className={`p-4 ${bg} ${color} rounded-2xl group-hover:scale-110 transition-transform duration-500 shadow-inner`}>
+                    <Icon className="w-8 h-8" />
+                </div>
+                <div>
+                    <h4 className="text-xs font-black text-zinc-500 uppercase tracking-widest">{title}</h4>
+                    <p className="text-xl font-black text-zinc-200 mt-1">{value}</p>
+                </div>
+            </CardContent>
+        </Card>
     );
 }

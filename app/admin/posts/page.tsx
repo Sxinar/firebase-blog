@@ -90,7 +90,7 @@ export default function AdminPostsPage() {
                                                 </Link>
                                             </Button>
                                             <Button variant="ghost" size="icon" asChild className="h-8 w-8 text-blue-400 hover:text-blue-300 hover:bg-blue-400/10">
-                                                <Link href={`/admin/edit-post/${post.id}`}>
+                                                <Link href={`/admin/edit-post?id=${post.id}`}>
                                                     <Edit className="w-4 h-4" />
                                                 </Link>
                                             </Button>

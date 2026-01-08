@@ -100,7 +100,7 @@ export default function AdminPagesPage() {
                                             </Link>
                                         </Button>
                                         <Button variant="ghost" size="icon" asChild className="text-zinc-400 hover:text-indigo-400">
-                                            <Link href={`/admin/edit-page/${page.id}`}>
+                                            <Link href={`/admin/edit-page?id=${page.id}`}>
                                                 <Pencil className="w-4 h-4" />
                                             </Link>
                                         </Button>

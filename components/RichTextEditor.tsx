@@ -183,6 +183,7 @@ export function RichTextEditor({ content, onChange }: RichTextEditorProps) {
             }),
         ],
         content: content,
+        immediatelyRender: false,
         onUpdate: ({ editor }) => {
             onChange(editor.getHTML());
         },
