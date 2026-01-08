@@ -1,9 +1,34 @@
+"use client";
 
 import { FileText, MessageSquare, Eye } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
+import { collection, getCountFromServer, query, collectionGroup } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 export default function AdminDashboard() {
+    const [stats, setStats] = useState({ posts: 0, comments: 0 });
+
+    useEffect(() => {
+        const fetchStats = async () => {
+            try {
+                // Posts Count
+                const postsSnapshot = await getCountFromServer(collection(db, "posts"));
+                const postsCount = postsSnapshot.data().count;
+
+                // Comments Count
+                const commentsSnapshot = await getCountFromServer(query(collectionGroup(db, "comments")));
+                const commentsCount = commentsSnapshot.data().count;
+
+                setStats({ posts: postsCount, comments: commentsCount });
+            } catch (error) {
+                console.error("Error fetching stats:", error);
+            }
+        };
+        fetchStats();
+    }, []);
+
     return (
         <div className="space-y-12">
             <div>
@@ -14,13 +39,13 @@ export default function AdminDashboard() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <StatsCard
                     title="TOPLAM YAZI"
-                    value="3"
+                    value={stats.posts}
                     icon={FileText}
                     iconRootClass="bg-indigo-600 shadow-indigo-500/30"
                 />
                 <StatsCard
                     title="YORUMLAR"
-                    value="2"
+                    value={stats.comments}
                     icon={MessageSquare}
                     iconRootClass="bg-rose-500 shadow-rose-500/30"
                 />

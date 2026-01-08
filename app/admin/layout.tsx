@@ -1,11 +1,32 @@
+"use client";
 
+import { useEffect, useState } from "react";
 import { AdminSidebar } from "@/components/AdminSidebar";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { useRouter } from "next/navigation";
 
 export default function AdminLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
+    const [loading, setLoading] = useState(true);
+    const router = useRouter();
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                router.push("/login"); // Changed from /admin/login to /login per my new page
+            }
+            setLoading(false);
+        });
+
+        return () => unsubscribe();
+    }, [router]);
+
+    if (loading) return <div className="h-screen bg-black flex items-center justify-center text-white">Yükleniyor...</div>;
+
     return (
         <div className="flex min-h-screen bg-black text-white selection:bg-rose-500/30">
             <AdminSidebar />
