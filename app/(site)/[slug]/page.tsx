@@ -7,7 +7,8 @@ import { db } from "@/lib/firebase";
 import { Post } from "@/types";
 import { useParams } from "next/navigation";
 import { format } from "date-fns";
-import tr from "date-fns/locale/tr";
+import { tr } from "date-fns/locale";
+import CommentsSection from "@/components/Comments";
 
 export default function PostPage() {
     const { slug } = useParams();
@@ -60,6 +61,8 @@ export default function PostPage() {
                     <p key={idx}>{paragraph}</p>
                 ))}
             </div>
+
+            <CommentsSection postId={post.id} />
         </article>
     );
 }
