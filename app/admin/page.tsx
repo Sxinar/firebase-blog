@@ -8,7 +8,7 @@ import { collection, getCountFromServer, query, collectionGroup } from "firebase
 import { db } from "@/lib/firebase";
 
 export default function AdminDashboard() {
-    const [stats, setStats] = useState({ posts: 0, comments: 0 });
+    const [stats, setStats] = useState({ posts: 0, comments: 0, pages: 0 });
 
     useEffect(() => {
         const fetchStats = async () => {
@@ -21,7 +21,11 @@ export default function AdminDashboard() {
                 const commentsSnapshot = await getCountFromServer(query(collectionGroup(db, "comments")));
                 const commentsCount = commentsSnapshot.data().count;
 
-                setStats({ posts: postsCount, comments: commentsCount });
+                // Pages Count
+                const pagesSnapshot = await getCountFromServer(collection(db, "pages"));
+                const pagesCount = pagesSnapshot.data().count;
+
+                setStats({ posts: postsCount, comments: commentsCount, pages: pagesCount });
             } catch (error) {
                 console.error("Error fetching stats:", error);
             }
@@ -51,7 +55,7 @@ export default function AdminDashboard() {
                 />
                 <StatsCard
                     title="SAYFALAR"
-                    value="1"
+                    value={stats.pages}
                     icon={Eye}
                     iconRootClass="bg-amber-500 shadow-amber-500/30"
                 />
