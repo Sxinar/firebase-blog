@@ -10,59 +10,83 @@ import { format } from "date-fns";
 import { tr } from "date-fns/locale";
 import CommentsSection from "@/components/Comments";
 
-export default function PostPage() {
+export default function ContentPage() {
     const { slug } = useParams();
-    const [post, setPost] = useState<Post | null>(null);
+    const [data, setData] = useState<any | null>(null);
+    const [type, setType] = useState<"post" | "page" | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchPost = async () => {
+        const fetchData = async () => {
             if (!slug) return;
             try {
-                const q = query(collection(db, "posts"), where("slug", "==", slug));
-                const querySnapshot = await getDocs(q);
+                // Try post first
+                const postQ = query(collection(db, "posts"), where("slug", "==", slug));
+                const postSnap = await getDocs(postQ);
 
-                if (!querySnapshot.empty) {
-                    const docSnap = querySnapshot.docs[0];
-                    setPost({
-                        id: docSnap.id,
-                        ...docSnap.data()
-                    } as Post);
+                if (!postSnap.empty) {
+                    setData({ id: postSnap.docs[0].id, ...postSnap.docs[0].data() });
+                    setType("post");
                 } else {
-                    console.error("Post not found");
+                    // Try page
+                    const pageQ = query(collection(db, "pages"), where("slug", "==", slug));
+                    const pageSnap = await getDocs(pageQ);
+
+                    if (!pageSnap.empty) {
+                        setData({ id: pageSnap.docs[0].id, ...pageSnap.docs[0].data() });
+                        setType("page");
+                    }
                 }
             } catch (error) {
-                console.error("Error fetching post:", error);
+                console.error("Error fetching content:", error);
             } finally {
                 setLoading(false);
             }
         };
 
-        fetchPost();
+        fetchData();
     }, [slug]);
 
-    if (loading) return <div className="text-center mt-10 text-zinc-500">Yükleniyor...</div>;
-    if (!post) return <div className="text-center mt-10 text-zinc-500">Yazı bulunamadı.</div>;
+    if (loading) return <div className="text-center mt-10 text-zinc-500 font-medium">İçerik yükleniyor...</div>;
+    if (!data) return <div className="text-center mt-20 text-zinc-500">
+        <h1 className="text-4xl font-bold mb-4">404</h1>
+        <p>Aradığınız içerik bulunamadı.</p>
+    </div>;
 
     return (
-        <article className="mt-10 px-4">
-            <header className="mb-8 text-center space-y-4">
-                <div className="text-sm font-medium text-red-500 uppercase tracking-wider">
-                    {post.createdAt ? format(new Date(post.createdAt.seconds * 1000), "d MMMM yyyy", { locale: tr }) : ""}
-                </div>
-                <h1 className="text-3xl md:text-5xl font-black tracking-tight text-white leading-tight">
-                    {post.title}
+        <article className="mt-10 px-4 max-w-4xl mx-auto">
+            <header className="mb-12 text-center space-y-4">
+                {type === "post" && data.createdAt && (
+                    <div className="text-sm font-bold text-rose-500 uppercase tracking-widest">
+                        {format(new Date(data.createdAt.seconds * 1000), "d MMMM yyyy", { locale: tr })}
+                    </div>
+                )}
+                <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-white leading-tight">
+                    {data.title}
                 </h1>
+                {type === "post" && data.coverImage && (
+                    <div className="mt-8 rounded-3xl overflow-hidden border border-zinc-800 shadow-2xl">
+                        <img src={data.coverImage} alt={data.title} className="w-full aspect-video object-cover" />
+                    </div>
+                )}
             </header>
 
-            <div className="prose prose-invert prose-lg mx-auto prose-p:text-zinc-400 prose-headings:text-zinc-200">
-                {/* Basic rendering, ideally use a markdown renderer here */}
-                {post.content.split('\n').map((paragraph, idx) => (
-                    <p key={idx}>{paragraph}</p>
-                ))}
+            <div className="prose prose-invert prose-lg mx-auto prose-p:text-zinc-400 prose-headings:text-zinc-100 prose-img:rounded-3xl prose-a:text-rose-500">
+                {/* Check if content is HTML or plain text */}
+                {data.content.includes('<') && data.content.includes('>') ? (
+                    <div dangerouslySetInnerHTML={{ __html: data.content }} />
+                ) : (
+                    data.content.split('\n').map((paragraph: string, idx: number) => (
+                        <p key={idx}>{paragraph}</p>
+                    ))
+                )}
             </div>
 
-            <CommentsSection postId={post.id} />
+            {type === "post" && (
+                <div className="mt-20 pt-10 border-t border-zinc-800">
+                    <CommentsSection postId={data.id} />
+                </div>
+            )}
         </article>
     );
 }

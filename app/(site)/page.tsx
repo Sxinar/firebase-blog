@@ -9,7 +9,17 @@ import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Post } from "@/types";
 
+import { Suspense } from "react";
+
 export default function HomePage() {
+    return (
+        <Suspense fallback={<div className="text-center mt-10">Yükleniyor...</div>}>
+            <HomeContent />
+        </Suspense>
+    );
+}
+
+function HomeContent() {
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
     const searchParams = useSearchParams();

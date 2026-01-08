@@ -6,13 +6,37 @@ import { cn } from "@/lib/utils";
 import { Monitor, Search, Github } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
 import { Input } from "./ui/input";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth, db } from "@/lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 export function Navbar() {
     const pathname = usePathname();
     const router = useRouter();
     const [showSearch, setShowSearch] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
+    const [user, setUser] = useState<any>(null);
+    const [settings, setSettings] = useState({ siteTitle: "Semih BAŞARAN" });
+
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+            setUser(currentUser);
+        });
+
+        const fetchSettings = async () => {
+            try {
+                const docRef = doc(db, "settings", "site");
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    setSettings(docSnap.data() as any);
+                }
+            } catch (error) { }
+        };
+        fetchSettings();
+
+        return () => unsubscribe();
+    }, []);
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
@@ -42,11 +66,17 @@ export function Navbar() {
                 >
                     Hakkımda
                 </Link>
+                <Link
+                    href="/contact"
+                    className={cn("hover:text-primary transition-colors", pathname === "/contact" && "text-foreground font-bold")}
+                >
+                    İletişim
+                </Link>
             </nav>
 
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
-                <Link href="/" className="text-xl font-bold tracking-tight text-foreground hover:opacity-80 transition-opacity">
-                    Semih BAŞARAN
+                <Link href="/" className="text-xl font-bold tracking-tight text-foreground hover:opacity-80 transition-opacity whitespace-nowrap">
+                    {settings.siteTitle}
                 </Link>
             </div>
 
@@ -72,9 +102,11 @@ export function Navbar() {
                     </button>
                 )}
 
-                <Link href="/admin" target="_blank" className="hover:text-primary transition-colors p-2 hidden sm:block">
-                    <Monitor className="w-5 h-5" />
-                </Link>
+                {user && (
+                    <Link href="/admin" target="_blank" className="hover:text-primary transition-colors p-2 hidden sm:block">
+                        <Monitor className="w-5 h-5" />
+                    </Link>
+                )}
 
                 <ThemeToggle />
             </div>
