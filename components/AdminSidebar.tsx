@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, PlusCircle, FileText, File, Link as LinkIcon, MessageSquare, Users, Settings, ExternalLink, LogOut } from "lucide-react";
+import { LayoutDashboard, PlusCircle, FileText, File, Mail, Link as LinkIcon, MessageSquare, Users, Settings, ExternalLink, LogOut } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const sidebarItems = [
@@ -11,6 +11,7 @@ const sidebarItems = [
     { name: "Yazı Ekle", href: "/admin/add-post", icon: PlusCircle },
     { name: "Yazılar", href: "/admin/posts", icon: FileText },
     { name: "Sayfalar", href: "/admin/pages", icon: File },
+    { name: "Mesajlar", href: "/admin/messages", icon: Mail },
     { name: "Slug Yönetimi", href: "/admin/slugs", icon: LinkIcon },
     { name: "Yorumlar", href: "/admin/comments", icon: MessageSquare },
     { name: "Kullanıcılar", href: "/admin/users", icon: Users },

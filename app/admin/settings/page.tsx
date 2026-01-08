@@ -1,78 +1,63 @@
+
 "use client";
 
-import { useEffect, useState } from "react";
-import { doc, getDoc, setDoc } from "firebase/firestore";
-import { db } from "@/lib/firebase";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useState, useEffect } from "react";
+import { getSettings, updateSettings } from "@/lib/db";
+import { Settings } from "@/types";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useTheme } from "next-themes";
-import { Moon, Sun, Monitor, Palette } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 
-export default function AdminSettingsPage() {
-    const [settings, setSettings] = useState({
-        siteTitle: "Semih BAŞARAN",
-        siteDescription: "Semih BAŞARAN ve yazıları",
-        primaryColor: "#e11d48", // Default rose
-        githubUrl: "https://github.com/basaransemih",
+export default function SettingsPage() {
+    const [settings, setSettings] = useState<Settings>({
+        siteTitle: "",
+        siteDescription: "",
+        primaryColor: "#6366f1",
+        maintenanceMode: false
     });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
-    const { theme, setTheme } = useTheme();
 
     useEffect(() => {
         const fetchSettings = async () => {
-            try {
-                const docRef = doc(db, "settings", "site");
-                const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
-                    setSettings(docSnap.data() as any);
-                }
-            } catch (error) {
-                console.error("Error fetching settings:", error);
-            } finally {
-                setLoading(false);
-            }
+            const data = await getSettings();
+            setSettings(data);
+            setLoading(false);
         };
         fetchSettings();
     }, []);
 
-    const handleSave = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleSave = async () => {
         setSaving(true);
         try {
-            await setDoc(doc(db, "settings", "site"), settings);
-            alert("Ayarlar başarıyla kaydedildi.");
+            await updateSettings(settings);
+            alert("Ayarlar başarıyla kaydedildi! Sayfayı yenileyerek değişiklikleri görebilirsiniz.");
+            window.location.reload();
         } catch (error) {
-            console.error("Error saving settings:", error);
+            console.error("Save error:", error);
             alert("Hata oluştu.");
         } finally {
             setSaving(false);
         }
     };
 
-    if (loading) return <div className="text-white">Ayarlar yükleniyor...</div>;
+    if (loading) return <div className="text-white">Yükleniyor...</div>;
 
     return (
-        <div className="space-y-8 max-w-4xl">
-            <div>
-                <h1 className="text-3xl font-bold text-white mb-2">Genel Ayarlar</h1>
-                <p className="text-zinc-400">Sitenizin genel görünümünü ve bilgilerini buradan düzenleyin.</p>
-            </div>
+        <div className="max-w-4xl mx-auto space-y-8">
+            <h1 className="text-4xl font-black text-white">Genel Ayarlar</h1>
 
-            <form onSubmit={handleSave} className="space-y-6">
-                <Card className="bg-zinc-900/50 border-zinc-800 text-zinc-100">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <Card className="bg-zinc-900/50 border-zinc-800 text-white col-span-2">
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <Monitor className="w-5 h-5 text-indigo-400" />
-                            Site Bilgileri
-                        </CardTitle>
-                        <CardDescription className="text-zinc-500">Arama motorları ve tarayıcı sekmesi için kullanılan bilgiler.</CardDescription>
+                        <CardTitle>Site Bilgileri</CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-4">
+                    <CardContent className="space-y-6">
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-zinc-400">Site Başlığı</label>
+                            <Label>Site Başlığı</Label>
                             <Input
                                 value={settings.siteTitle}
                                 onChange={(e) => setSettings({ ...settings, siteTitle: e.target.value })}
@@ -80,68 +65,66 @@ export default function AdminSettingsPage() {
                             />
                         </div>
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-zinc-400">Site Açıklaması</label>
+                            <Label>Site Açıklaması (SEO)</Label>
                             <Textarea
                                 value={settings.siteDescription}
                                 onChange={(e) => setSettings({ ...settings, siteDescription: e.target.value })}
-                                className="bg-zinc-950/50 border-zinc-700 min-h-[100px]"
+                                className="bg-zinc-950/50 border-zinc-700"
                             />
                         </div>
                     </CardContent>
                 </Card>
 
-                <Card className="bg-zinc-900/50 border-zinc-800 text-zinc-100">
+                <Card className="bg-zinc-900/50 border-zinc-800 text-white">
                     <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <Palette className="w-5 h-5 text-rose-400" />
-                            Görünüm Ayarları
-                        </CardTitle>
+                        <CardTitle>Tema & Görünüm</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-6">
-                        <div className="space-y-4">
-                            <label className="text-sm font-medium text-zinc-400">Varsayılan Tema</label>
-                            <div className="flex gap-4">
-                                <Button
-                                    type="button"
-                                    variant={theme === "light" ? "default" : "outline"}
-                                    onClick={() => setTheme("light")}
-                                    className="flex-1 gap-2"
-                                >
-                                    <Sun className="w-4 h-4" /> Açık
-                                </Button>
-                                <Button
-                                    type="button"
-                                    variant={theme === "dark" ? "default" : "outline"}
-                                    onClick={() => setTheme("dark")}
-                                    className="flex-1 gap-2"
-                                >
-                                    <Moon className="w-4 h-4" /> Koyu
-                                </Button>
-                            </div>
-                        </div>
-
                         <div className="space-y-2">
-                            <label className="text-sm font-medium text-zinc-400">Vurgu Rengi (Accent Color)</label>
+                            <Label>Ana Renk (Primary Color)</Label>
                             <div className="flex gap-4 items-center">
-                                <Input
+                                <input
                                     type="color"
                                     value={settings.primaryColor}
                                     onChange={(e) => setSettings({ ...settings, primaryColor: e.target.value })}
-                                    className="w-12 h-12 p-1 bg-zinc-950/50 border-zinc-700 cursor-pointer"
+                                    className="w-12 h-12 rounded cursor-pointer bg-transparent border-none"
                                 />
-                                <span className="text-zinc-500 text-sm font-mono">{settings.primaryColor}</span>
+                                <Input
+                                    value={settings.primaryColor}
+                                    onChange={(e) => setSettings({ ...settings, primaryColor: e.target.value })}
+                                    className="bg-zinc-950/50 border-zinc-700 font-mono"
+                                />
                             </div>
-                            <p className="text-xs text-zinc-500 mt-2">Bu renk sitedeki butonlar, linkler ve vurgu noktaları için kullanılacaktır.</p>
                         </div>
                     </CardContent>
                 </Card>
 
-                <div className="flex justify-end">
-                    <Button type="submit" disabled={saving} className="bg-indigo-600 hover:bg-indigo-700 px-12 py-6 text-lg">
-                        {saving ? "Kaydediliyor..." : "Ayarları Kaydet"}
-                    </Button>
-                </div>
-            </form>
+                <Card className="bg-zinc-900/50 border-zinc-800 text-white">
+                    <CardHeader>
+                        <CardTitle>Durum</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-6">
+                        <div className="flex items-center justify-between p-4 rounded-2xl bg-zinc-950/30 border border-zinc-800">
+                            <div className="space-y-0.5">
+                                <Label className="text-base">Bakım Modu</Label>
+                                <p className="text-sm text-zinc-400">Siteyi ziyaretçilere kapatır.</p>
+                            </div>
+                            <Switch
+                                checked={settings.maintenanceMode}
+                                onCheckedChange={(val: boolean) => setSettings({ ...settings, maintenanceMode: val })}
+                            />
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
+
+            <Button
+                onClick={handleSave}
+                disabled={saving}
+                className="w-full h-14 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-lg rounded-2xl shadow-xl shadow-indigo-500/20"
+            >
+                {saving ? "Kaydediliyor..." : "Ayarları Güncelle"}
+            </Button>
         </div>
     );
 }
