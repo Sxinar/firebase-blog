@@ -14,6 +14,7 @@ export default function EditPostPage() {
     const { id } = useParams();
     const [title, setTitle] = useState("");
     const [slug, setSlug] = useState("");
+    const [coverImage, setCoverImage] = useState("");
     const [content, setContent] = useState("");
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -29,6 +30,7 @@ export default function EditPostPage() {
                     const data = docSnap.data();
                     setTitle(data.title);
                     setSlug(data.slug);
+                    setCoverImage(data.coverImage || "");
                     setContent(data.content);
                 } else {
                     alert("Yazı bulunamadı!");
@@ -53,6 +55,7 @@ export default function EditPostPage() {
                 title,
                 slug: slug || title.toLowerCase().replace(/ /g, "-"),
                 content,
+                coverImage,
                 updatedAt: serverTimestamp(),
             });
             router.push("/admin/posts");
@@ -91,6 +94,15 @@ export default function EditPostPage() {
                                 value={slug}
                                 onChange={(e) => setSlug(e.target.value)}
                                 placeholder="yazi-basligi"
+                                className="bg-zinc-950/50 border-zinc-700 focus-visible:ring-indigo-500"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-zinc-400">Kapak Görseli (URL)</label>
+                            <Input
+                                value={coverImage}
+                                onChange={(e) => setCoverImage(e.target.value)}
+                                placeholder="https://ornek.com/resim.jpg"
                                 className="bg-zinc-950/50 border-zinc-700 focus-visible:ring-indigo-500"
                             />
                         </div>

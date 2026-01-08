@@ -4,5 +4,6 @@ export interface Post {
     title: string;
     slug: string;
     content: string;
+    coverImage?: string;
     createdAt: any;
 }

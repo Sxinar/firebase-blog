@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Github } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import { collection, getDocs, query, orderBy } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { Post } from "@/types";
@@ -11,6 +12,8 @@ import { Post } from "@/types";
 export default function HomePage() {
     const [posts, setPosts] = useState<Post[]>([]);
     const [loading, setLoading] = useState(true);
+    const searchParams = useSearchParams();
+    const searchQuery = searchParams.get("search");
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -31,6 +34,12 @@ export default function HomePage() {
 
         fetchPosts();
     }, []);
+
+    const filteredPosts = posts.filter(post => {
+        if (!searchQuery) return true;
+        const q = searchQuery.toLowerCase();
+        return post.title.toLowerCase().includes(q) || post.content.toLowerCase().includes(q);
+    });
 
     return (
         <div className="flex flex-col items-center justify-center space-y-12 mt-10">
@@ -55,10 +64,12 @@ export default function HomePage() {
 
                 {loading ? (
                     <div className="text-center text-zinc-500">Yazılar yükleniyor...</div>
-                ) : posts.length === 0 ? (
-                    <div className="text-center text-zinc-500">Henüz yazı bulunmuyor.</div>
+                ) : filteredPosts.length === 0 ? (
+                    <div className="text-center text-zinc-500">
+                        {searchQuery ? `"${searchQuery}" için sonuç bulunamadı.` : "Henüz yazı bulunmuyor."}
+                    </div>
                 ) : (
-                    posts.map((post) => (
+                    filteredPosts.map((post) => (
                         <Link key={post.id} href={`/${post.slug}`} className="group flex items-start gap-6">
                             <div className="flex flex-col items-end text-xs font-bold text-red-500 uppercase min-w-[3rem] pt-1">
                                 <span>ARA</span>

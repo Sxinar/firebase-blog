@@ -13,6 +13,7 @@ import { useRouter } from "next/navigation";
 export default function AddPostPage() {
     const [title, setTitle] = useState("");
     const [slug, setSlug] = useState("");
+    const [coverImage, setCoverImage] = useState("");
     const [content, setContent] = useState("");
     const [loading, setLoading] = useState(false);
     const router = useRouter();
@@ -26,10 +27,11 @@ export default function AddPostPage() {
                 title,
                 slug: slug || title.toLowerCase().replace(/ /g, "-"),
                 content,
+                coverImage,
                 createdAt: serverTimestamp(),
             });
             // Redirect to admin dashboard or posts list (which doesn't exist yet, so dashboard)
-            router.push("/admin");
+            router.push("/admin/posts");
         } catch (error) {
             console.error("Error adding document: ", error);
             alert("Hata oluştu: " + error);
@@ -63,6 +65,15 @@ export default function AddPostPage() {
                                 value={slug}
                                 onChange={(e) => setSlug(e.target.value)}
                                 placeholder="yazi-basligi"
+                                className="bg-zinc-950/50 border-zinc-700 focus-visible:ring-indigo-500"
+                            />
+                        </div>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-zinc-400">Kapak Görseli (URL)</label>
+                            <Input
+                                value={coverImage}
+                                onChange={(e) => setCoverImage(e.target.value)}
+                                placeholder="https://ornek.com/resim.jpg"
                                 className="bg-zinc-950/50 border-zinc-700 focus-visible:ring-indigo-500"
                             />
                         </div>
