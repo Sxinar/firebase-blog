@@ -11,8 +11,8 @@ interface SettingsContextType {
 }
 
 const defaultSettings: Settings = {
-    siteTitle: "Dawn Blog",
-    siteDescription: "Minimalist & Modern Blog",
+    siteTitle: "Semih BAŞARAN",
+    siteDescription: "Teknoloji ve Yazılım Notları",
     primaryColor: "#6366f1",
     maintenanceMode: false
 };

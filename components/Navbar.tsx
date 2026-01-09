@@ -41,7 +41,7 @@ export function Navbar() {
             <div className="glass h-20 rounded-[2rem] px-8 flex items-center justify-between relative overflow-hidden group/nav">
                 <div className="flex items-center gap-8 relative z-10">
                     <Link href="/" className="text-2xl font-black tracking-tighter text-foreground uppercase italic leading-none hover:scale-105 transition-transform shrink-0">
-                        {settings.siteTitle || "DAWN"}
+                        {settings.siteTitle || "Semih BAŞARAN"}
                     </Link>
 
                     <nav className="hidden lg:flex items-center space-x-1 border-l border-border pl-8 ml-2">

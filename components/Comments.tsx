@@ -53,63 +53,65 @@ export default function CommentsSection({ postId }: { postId: string }) {
     };
 
     return (
-        <div className="mt-16 max-w-2xl mx-auto">
-            <h3 className="text-2xl font-bold text-white mb-8 border-b border-zinc-800 pb-4">
+        <div className="mt-16 max-w-2xl mx-auto px-4 sm:px-0">
+            <h3 className="text-2xl font-black text-foreground mb-8 border-b border-border pb-4 uppercase italic">
                 Yorumlar ({comments.length})
             </h3>
 
-            <form onSubmit={handleSubmit} className="mb-12 space-y-4 bg-zinc-900/30 p-6 rounded-2xl border border-zinc-800/50">
-                <div>
-                    <label className="text-sm text-zinc-400 mb-1 block">İsim</label>
+            <form onSubmit={handleSubmit} className="mb-12 space-y-6 bg-muted/30 p-8 rounded-[2rem] border border-border shadow-sm">
+                <div className="space-y-2">
+                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] ml-1">İSİM SOYİSİM</label>
                     <input
                         type="text"
                         value={authorName}
                         onChange={(e) => setAuthorName(e.target.value)}
-                        className="w-full bg-zinc-950/50 border border-zinc-700 rounded-md p-2 text-zinc-200 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        className="w-full bg-background border border-border rounded-xl h-12 px-4 text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 transition-all font-medium"
                         placeholder="Adınız..."
                         required
                     />
                 </div>
-                <div>
-                    <label className="text-sm text-zinc-400 mb-1 block">Yorum</label>
+                <div className="space-y-2">
+                    <label className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em] ml-1">MESAJINIZ</label>
                     <Textarea
                         value={newComment}
                         onChange={(e) => setNewComment(e.target.value)}
                         placeholder="Düşüncelerini paylaş..."
-                        className="bg-zinc-950/50 border-zinc-700 min-h-[100px] focus-visible:ring-indigo-500"
+                        className="bg-background border-border min-h-[120px] rounded-2xl p-4 focus-visible:ring-primary/50 text-foreground"
                         required
                     />
                 </div>
-                <div className="flex justify-end">
-                    <Button type="submit" disabled={submitting} className="bg-indigo-600 hover:bg-indigo-700 text-white">
-                        {submitting ? "Gönderiliyor..." : "Yorum Yap"}
+                <div className="flex justify-end pt-2">
+                    <Button type="submit" disabled={submitting} className="bg-primary hover:opacity-90 text-primary-foreground font-black uppercase tracking-widest px-8 h-12 rounded-xl transition-all">
+                        {submitting ? "GÖNDERİLİYOR..." : "YORUM YAP"}
                     </Button>
                 </div>
             </form>
 
-            <div className="space-y-6">
+            <div className="space-y-6 pb-20">
                 {comments.map((comment) => (
-                    <div key={comment.id} className="flex gap-4 p-4 rounded-xl bg-zinc-900/20 border border-zinc-800/30">
-                        <Avatar className="w-10 h-10 border border-zinc-700">
-                            <AvatarFallback className="bg-zinc-800 text-zinc-400 font-bold uppercase">
+                    <div key={comment.id} className="flex gap-6 p-6 rounded-[2rem] bg-muted/10 border border-border/50 hover:bg-muted/20 transition-all">
+                        <Avatar className="w-12 h-12 border border-border shadow-sm">
+                            <AvatarFallback className="bg-primary text-primary-foreground font-black uppercase">
                                 {comment.author.substring(0, 2)}
                             </AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
-                            <div className="flex items-center justify-between mb-1">
-                                <h4 className="font-semibold text-zinc-200">{comment.author}</h4>
-                                <span className="text-xs text-zinc-500">
+                            <div className="flex items-center justify-between mb-2">
+                                <h4 className="font-bold text-foreground tracking-tight">{comment.author}</h4>
+                                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                                     {comment.createdAt ? formatDistanceToNow(new Date(comment.createdAt.seconds * 1000), { addSuffix: true, locale: tr }) : "Şimdi"}
                                 </span>
                             </div>
-                            <p className="text-zinc-400 text-sm leading-relaxed">
+                            <p className="text-muted-foreground text-sm leading-relaxed font-medium italic">
                                 {comment.content}
                             </p>
                         </div>
                     </div>
                 ))}
                 {comments.length === 0 && (
-                    <p className="text-center text-zinc-600 italic">Henüz yorum yapılmamış. İlk yorumu sen yap!</p>
+                    <div className="text-center py-12 border-2 border-dashed border-border rounded-[2rem]">
+                        <p className="text-muted-foreground font-medium italic">Henüz yorum yapılmamış. İlk yorumu sen yap!</p>
+                    </div>
                 )}
             </div>
         </div>
