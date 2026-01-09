@@ -46,8 +46,8 @@ export function Navbar() {
 
                     <nav className="hidden lg:flex items-center space-x-1 border-l border-border pl-8 ml-2">
                         <NavLink href="/" active={pathname === "/"}>Ana Sayfa</NavLink>
-                        <NavLink href="/about" active={pathname === "/about"}>Hakkımda</NavLink>
-                        <NavLink href="/contact" active={pathname === "/contact"}>İletişim</NavLink>
+                        <NavLink href="/about/" active={pathname === "/about"}>Hakkımda</NavLink>
+                        <NavLink href="/contact/" active={pathname === "/contact"}>İletişim</NavLink>
                     </nav>
                 </div>
 
